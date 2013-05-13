@@ -1,0 +1,25 @@
+
+<div class="statTable">
+    <table style="width:100%;">
+        <thead>
+        <tr>
+            <th ng-repeat="(i,th) in head" ng-class="selectedCls(i)" ng-click="changeSorting(i)">{{th}}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="row in stats | orderBy:sort.column : sort.descending" class="row">
+            <td>{{row.a_pageNum}}</td>
+            <td class="filename" ng-class="{caution: row.c_scale>1}">{{row.b_fname}}</td>
+            <td ng-class="{caution: row.c_scale>1}">{{row.c_scale}}</td>
+            <td>{{row.d_current}}</td>
+            <td>{{row.e_size}}</td>
+            <td ng-click="displayPreview()">Click to show</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div id='preview' ng-show=display ng-click="display=!display">
+    <img ng-src='{{preview}}'>
+</div>
+

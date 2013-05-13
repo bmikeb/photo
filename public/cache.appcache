@@ -1,0 +1,10 @@
+CACHE MANIFEST
+# version 1.0.0
+
+CACHE:
+/assets/*
+/html5/src/style.css
+/html5/src/background.png
+
+NETWORK:
+*
