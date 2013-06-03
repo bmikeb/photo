@@ -89,6 +89,7 @@ testApp.directive('inPanel', function(mylocalStorage){
     };
     return{
         link: link,
-        controller: inController
+        controller: inController,
+        scope: true
     }
 })

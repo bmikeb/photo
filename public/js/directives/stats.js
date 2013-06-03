@@ -2,6 +2,7 @@ testApp.directive('infoPanel', function($rootScope, mylocalStorage){
     return{
 
         templateUrl: 'details.html',
+        scope: true,
 
         controller: function($rootScope, $scope, $log){
             var $stats = $scope.stats || [],
@@ -77,11 +78,10 @@ testApp.directive('infoPanel', function($rootScope, mylocalStorage){
 
                 $scope.preview = mylocalStorage.getImg(img);
                 var imgSz = this.row['d_origSize'].split('x'),
-                    imgW = imgSz[0],
-                    imgH = imgSz[1],
+                    imgW = imgSz[0], imgH = imgSz[1],
                     ratio = imgH/imgW;
 
-                if(imgW>500) {
+                if(imgW>400) {
                     koef = imgW/400;
                     imgW /= koef;
                     imgH = imgW*ratio;
@@ -99,6 +99,12 @@ testApp.directive('infoPanel', function($rootScope, mylocalStorage){
             $rootScope.$watch('statShow',function(newVal){
                 var c = newVal=='Show' ? 'up' : 'down';
                 el.attr({'class': c, id:'infoPanel'});
+
+                if(!$rootScope.statsLoaded){
+                    el.addClass('noLoaded')
+                }else{
+                    el.removeClass('noLoaded')
+                }
             });
         }
     }

@@ -40,7 +40,6 @@ angular.module('testApp.sharedServices', [])
             },
             save: function(page){
                 localStorage.setItem("ALBUM."+page.ix, JSON.stringify(page));
-//                this.get('*')
             },
             getAllInfo: function(){
                 var pagesInfo = [];

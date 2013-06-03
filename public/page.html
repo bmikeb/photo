@@ -1,33 +1,33 @@
-<div ng-repeat="frame in page.frames" class="frame" ng-style="frame.style">
-    <div img-Frame ng-style="frame.imgframe" class="imgframe">
-        <img class="img fitted" picture ng-src="{{frame.imgdata}}" ng-style="frame.imgstyle">
-    </div>
+<div my-Carousel ng-style="carousel.style" id='carousel'>
+    <div ng-repeat="page in carousel" class="carouselPage" ng-style="page.style">
+        <div ng-repeat="frame in page.frames" class="frame" ng-style="frame.style">
+            <div img-Frame ng-style="frame.imgframe" class="imgframe">
+                <img class="img fitted" picture ng-src="{{frame.imgdata}}" ng-style="frame.imgstyle">
+            </div>
 
-    <div frame-Controls ng-style="frame.framecontrols" ng-show="frame.editing" >
-        <div class="delete" ng-click="delete()"></div>
-        <input class="file hide" type="file" name="file" />
-        <div class="download" ng-click='download()'></div>
-        <div class="comment" type="input"></div>
-        <div class="revert" ng-click='revert()'></div>
-    </div>
-    <div img-Controls ng-style="frame.imgcontrols" ng-show="frame.imgEditing">
-        <div class="resize"></div>
-        <div class="move"></div>
+            <div frame-Controls ng-style="frame.framecontrols" ng-show="frame.editing" >
+                <div class="delete" ng-click="delete()"></div>
+                <input class="file hide" type="file" name="file" />
+                <div class="download" ng-click='download()'></div>
+                <div class="comment" type="input"></div>
+                <div class="revert" ng-click='revert()'></div>
+            </div>
+            <div img-Controls ng-style="frame.imgcontrols" ng-show="frame.imgEditing">
+                <div class="resize"></div>
+                <div class="move"></div>
+            </div>
+        </div>
     </div>
 </div>
 
-
 <div id="buttons">
-    <a ng-href="{{nextPageNum}}"><button ng-click="addPage()">New page</button></a>
-    <button id="savePageBtn" ng-click="savePage()" ng-class="{changed: page.changed}">Save page</button>
-
-    <a ng-href="{{prevPageNum}}"><button ng-click="prevPage()">&lt;--</button></a>
-    <a ng-href="{{gotoPageNum}}">
+    <a ng-href="{{gotoPageNum}}"><button ng-click="addPage()">New page</button></a>
+    <button id="savePageBtn" ng-click="savePage()" ng-class="{changed: changed}">Save page</button>
+    <a ng-href="{{gotoPageNum}}"><button ng-click="prevPage()">&lt;--</button></a>
         <form ng-submit="gotoPage(currPageNum)">
-            <input ng-model="currPageNum" ng-blur="gotoPage(currPageNum)">
+            <input ng-model="currPageNum">
         </form>
-    </a>
-    <a ng-href="{{nextPageNum}}"><button ng-click="nextPage()">--&gt;</button></a>
+    <a ng-href="{{gotoPageNum}}"><button ng-click="nextPage()">--&gt;</button></a>
 
     <button id="stat" ng-click="toggleStat()">{{statShow}} stats</button>
 

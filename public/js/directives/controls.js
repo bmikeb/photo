@@ -1,13 +1,13 @@
 
 testApp.directive('imgControls', function($document, $log){
         return {
-            link: function(scope, el, attr){
+            link: function(scope, el, attr, ctrl){
 
             el.addClass("imgcontrols");
 
             var frame = scope.frame,
                 ctrls = frame.imgcontrols,
-                page = scope.$parent.page;
+                page = scope.$parent.$parent;
 
             var resize = $('.resize', el),
                 move = $('.move', el);
@@ -95,20 +95,29 @@ testApp.directive('imgControls', function($document, $log){
 testApp.directive('frameControls', function(){
         return function(scope, el, attr){
             el.addClass('framecontrols');
+            var frame = scope.frame,
+                page = scope.$parent.$parent;
 
             $('.delete', el).on('mouseup', function(){
                 el.parent().remove();
                 scope.$destroy();
+                page.changed = true;
             });
             $('.download', el).on('mouseup', function(){
                 $('.file', el).trigger('click');
             });
+            $('.file', el).on('click', function(e, data){
+                var img = data;
+            })
             $('.comment', el).on('mouseup', function(){
-                promptDlg = prompt("Enter comments: ", "");
-                scope.frame.comments = promptDlg;
+                var comnts = (frame.comments && frame.comments.length==0)
+                    ? "" : frame.comments;
+
+                promptDlg = prompt("Enter comments: ", comnts);
+                frame.comments = promptDlg;
+                scope.changed = (comnts==promptDlg) ? false : true;
             });
             $('.revert', el).on('mouseup', function(){
-                var frame = scope.frame;
                 var numOfPreviews = $('#picsLoadedPanel').children().length;
                 $('<img style="width:100%" src="' + frame.imgdata + '" data=\''+JSON.stringify(frame.rasterData)+'\' />')
                     .on('dragstart', function(e){
@@ -116,18 +125,6 @@ testApp.directive('frameControls', function(){
                         tgt = this;
                     })
                     .appendTo($('#picsLoadedPanel'));
-//                $('#picsLoadedPanel')
-//                    .append('<img style="width:100%" id="i-'+numOfPreviews+'" src="'+frame.imgdata + '">')
-//                    .on('dragstart', function(e){
-//                        e.originalEvent.dataTransfer.effectAllowed = "move";
-//                        tgt = this;
-//                    })
-
-//                var data = frame.rasterData.d_origSize.split('x');
-//                panel.push(frame.rasterData)
-
-//                tgt = {src: frame.imgdata, img: {width:data[0], height:data[1]},
-//                        id:"i-"+numOfPreviews, rasterData: frame.rasterData};
 
                 $('.img.fitted', el.parent()).remove();
 

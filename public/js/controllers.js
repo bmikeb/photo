@@ -1,96 +1,72 @@
-
-function mainCtrl($rootScope){
+function mainCtrl($rootScope, $scope, mylocalStorage){
     pages = $rootScope.pages = [];
+    carousel = $rootScope.carousel=[];
 
     $rootScope.statShow='Show';
     $rootScope.photos = 0;
     $rootScope.stats = [];
-    $rootScope.pages = [];
-    $rootScope.statsLoaded = false;
-    $rootScope.pageAdded = false;
-    prevPage = 1;
-
+    $rootScope.pagesNum = 0;
 }
-function pageCtrl($scope, $rootScope, mylocalStorage, $routeParams){
 
-    displayedNum = $rootScope.currPageNum = parseInt($routeParams.currPageNum);
-    pageIx = displayedNum-1;
-    var currP;
+function pageCtrl($scope, $rootScope, mylocalStorage, $routeParams, $timeout, $log){
 
-    $scope.gotoPage = function (currPageNum, inc){
-        inc = inc || 0;
-        prevPage = window.location.hash.match(/\d+$/)[0];
-        var gotoPg = parseInt(currPageNum) + inc;
+    var currPage = Number($routeParams.currPageNum);
 
-        if( !$rootScope.statsLoaded )
-            pagesLen = mylocalStorage.get('*');
-
-        if( !$rootScope.pageAdded && ($rootScope.pagesNum < gotoPg || gotoPg < 1)){
-            alert("Such page does not exist");
-            currP = $rootScope.currPageNum = prevPage
-        }else
-            currP = $rootScope.currPageNum = gotoPg
-
-        if(inc > 0)
-            $scope.nextPageNum = "#/pages/" + currP;
-        if(inc < 0)
-            $scope.prevPageNum = "#/pages/" + currP;
-        else{
-            $scope.gotoPageNum = "#/pages/" + currP;
-        }
-    };
-
-
-    if(displayedNum==1 && JSON.stringify(mylocalStorage.get('0')).length < 3
-        || $rootScope.pageAdded){
-        $scope.page = { frames:[], ix: 0, stat:[], changed: false };
-        $rootScope.pageAdded = false;
-    }else
-        getCachedData();
-
-    function getCachedData(){
-
-        if( !$rootScope.statsLoaded ){
-            $rootScope.pagesNum = pagesLen = mylocalStorage.get('*');
-            var photos = 0;
-            angular.forEach($rootScope.stats, function(stat){
-                photos += stat.length
-            })
-            $rootScope.photos = photos;
-        }
+    function getStat(){
+        $rootScope.pagesNum = mylocalStorage.get('*');
+        var photos = 0;
+        angular.forEach($rootScope.stats, function(stat){
+            photos += stat.length
+        })
+        $rootScope.photos = photos;
+    }
+    function getCachedData(pageIx){
         var data = mylocalStorage.get(pageIx)
-        if(JSON.stringify(data).length < 3) data = {};
+        if(JSON.stringify(data).length < 3) data = {frames:[]};
 
-        init(null, data);
+        return init(null, data, pageIx);
     };
 
     $scope.safeApply = function(fn) {
         if(!$scope.$$phase) $scope.$apply(fn)
     }
 
-    $scope.delete = function(frame){
-        $scope.frames.splice(frames.indexOf(frame), 1)
+    $scope.gotoPage = function ( inc){
+        $scope.inc = inc || 0;//if number enterd directly in text field
+        //to digit because currPageNum is input's data
+        $rootScope.prevPageNum = parseInt($scope.currPageNum);
+
+        var gotoPg = Math.abs(inc)==1 ? $rootScope.prevPageNum + inc : inc;
+
+        pagesLen = $rootScope.pagesNum;
+        if( pagesLen < gotoPg || gotoPg < 1){
+            alert("Such page does not exist");
+            return;
+        }
+        gotoPg = (gotoPg > pagesLen) ? 1 : (gotoPg < 1 ? pagesLen : gotoPg);
+        $rootScope.gotoPageNum = "#/pages/" + gotoPg;
     }
 
     $scope.prevPage = function (){
-        this.gotoPage( $scope.currPageNum, -1 )
+        this.gotoPage( -1 )
     };
 
     $scope.nextPage = function (){
-        this.gotoPage( $scope.currPageNum, 1 );
+        this.gotoPage( 1 );
     };
 
     $scope.addPage = function (){
-        var newURL = 1+ parseInt($scope.currPageNum);
-        $scope.nextPageNum = "#/pages/" + newURL;
-
+        $scope.gotoPageNum = "#/pages/"+ Number(1+parseInt($rootScope.currPageNum));
         $rootScope.pagesNum++;
-        $rootScope.pageAdded = true;
     };
 
     $scope.$on('assetAdded', function (event, assetChosen){
-        //no routing appied so direct passing to func
-        init(event, {frames: data[assetChosen]})
+        var newPage = $rootScope.carousel[0] = init(event, {frames: data[assetChosen]}, $rootScope.currPageNum-1)
+        newPage.style= {left: 1000+'px'}
+    });
+
+    $scope.$on('pageChanged', function (event){
+        $scope.changed = true;
     });
 
     $scope.savePage = function (){
@@ -105,65 +81,66 @@ function pageCtrl($scope, $rootScope, mylocalStorage, $routeParams){
         angular.forEach(page.frames, function(frame, key){
             var rData = JSON.stringify(frame.rasterData);
             if(rData && rData.length > 3){
-                if(JSON.stringify(page.stat[key]) != rData){
-                    page.changed = true;
-                }
                 page.stat[key] = frame.rasterData;
                 page.stat[key]['a_pageNum'] = page.ix+1;
-
             }
             statsToUpdate = {ix: page.ix, stat: page.stat }
         });
 
         mylocalStorage.save(page);
-        $rootScope.$broadcast('updateStat', statsToUpdate)
+        $rootScope.$broadcast('updateStat', statsToUpdate);
 
-        pages[page.ix] = page;
-
-        page.changed = false;
+        //only data to display in stats fileds below arrows
+        $scope.pages[page.ix] = statsToUpdate;
+        $scope.changed = false;
     };
 
-
-    $rootScope.toggleStat = function(){
-//        if($scope.page.changed)
-            this.savePage(true);
-
-        //this is due to controlling button belongs to mainCtrl scope
-        $rootScope.statShow= $rootScope.statShow=='Hide'? 'Show' : 'Hide';
-    }
-
-    function init(event, data){
-//        if($scope.page.images > 0 || $scope.page.images){
+    function init(event, data, pageIx){
+//        if($scope.page.stat.length > 0 ){
 //            var conf = confirm('All frames on this page will be deleted. OK to proceed?')
 //            if( !conf ) return;
 //        }
-
-        var frames = data.frames,
-            stat = data.stat || [];
-
-        var page = $scope.page = {images: 0, changed: false, frames: frames, ix: pageIx, stat:stat};
-
+        var frames = data.frames, style;
+        var page = $scope.page = {/*changed: false, */frames: frames, ix: pageIx, stat:data.stat || []};
             angular.forEach(page.frames, function(frame, key){
-                frame.style = {left: frame.x+'px', top: frame.y+"px", width: frame.w+"px", height:frame.h+"px"}
+                style = {left: frame.x+'px', top: frame.y+"px", width: frame.w+"px", height:frame.h+"px"}
+                angular.extend(frame, {
+                    style: style,
 
-                frame.imgdata = frames[key].imgdata || '';
-                frame.rasterData = frames[key].rasterData || '';
-                frame.imgstyle = frames[key].imgstyle || {left:0, top:0};
+                    imgdata: frames[key].imgdata || '',
+                    rasterData: frames[key].rasterData || '',
+                    imgstyle: frames[key].imgstyle || {left:0, top:0},
+                    imgframe: JSON.parse(JSON.stringify(style)), imgcontrols: {}, framecontrols: {},
 
-                frame.color = "#AAA";
-                frame.editing = false;
-                frame.imgEditing = false;
-
-                //should not be changed
-                frame.imgframe = JSON.parse(JSON.stringify(frame.style));
-                frame.imgcontrols = {};
-                frame.framecontrols = {};
+                    color: "#AAA", editing: false, imgEditing: false
+                })
             })
-        pages[pageIx] =  $scope.page;
+        pages[pageIx] =  {ix: pageIx, stat:data.stat || []};
+        return page;
     }
-};
 
+    $rootScope.toggleStat = function(){
+        this.savePage(true);
+        $rootScope.statShow= $rootScope.statShow=='Hide'? 'Show' : 'Hide';
+    }
 
+    //at the moment $routeParams already configured 'cos ctrl is loaded after hash resolving and holds new page Number
+    //first is for normal flow (when prevPage exists, second -- for when page refresh)
+    var prevIX = $rootScope.prevPageNum - 1 || Number($routeParams.currPageNum) - 2
+    var prevP = getCachedData(prevIX);
+    $rootScope.carousel[0] = prevP;
+    $rootScope.carousel[0].style= {left: 0}
+
+    var curIX = Number($routeParams.currPageNum) - 1;
+    var newP = getCachedData(curIX);
+    $rootScope.currPageNum = curIX+1;
+
+    if(typeof inc=='undefined'){
+        getStat();
+        inc = 0
+    }
+    $scope.changed = false;
+}
 
 
 function thumbsCtrl($scope, $rootScope){
@@ -190,7 +167,3 @@ function thumbsCtrl($scope, $rootScope){
             this.layout.fav = {opacity: 0.6}
     };
 }
-
-mainCtrl.$inject = ['$rootScope'];
-pageCtrl.$inject = ['$scope', '$rootScope', 'mylocalStorage', '$routeParams', '$http'];
-thumbsCtrl.$inject = ['$scope', '$rootScope', '$http'];

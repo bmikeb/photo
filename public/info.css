@@ -6,6 +6,11 @@
 
     background-color: #eee;
     -webkit-transition: top 1s ease-in-out;
+    -moz-transition: top 1s ease-in-out;
+}
+.noLoaded{
+    -webkit-transition-duration: 0 !important;
+    -moz-transition-duration: 0 !important;
 }
 .statTable{
     max-height: 400px;
@@ -18,8 +23,10 @@
     position: absolute;
     top: 0;
 }
+
 .up{ top: -500px;}
 .down{ top: 50px;}
+
 #stat{
     margin-left: 10px;
 }

@@ -8,7 +8,7 @@ testApp.directive('imgFrame', function($document, $log, mylocalStorage){
         function revert (){
             $rootScope.$broadcast('imageReverted', frame.imgdata)
         }
-        function enter(){
+        function changed(){
             var img = frame.imgstyle,
                 imgcontrols = frame.imgcontrols;
 
@@ -20,11 +20,11 @@ testApp.directive('imgFrame', function($document, $log, mylocalStorage){
                     imgcontrols.left = i(img.width) + i(img.left) + 'px';
                 })
             }
+            $rootScope.$broadcast('pageChanged')
         }
         return{
-//            fireUpdate: fireUpdate,
             revert: revert,
-            enter:enter
+            changed:changed
         }
     };
 
@@ -50,8 +50,6 @@ testApp.directive('imgFrame', function($document, $log, mylocalStorage){
             event.stopPropagation();
             event.preventDefault();
 
-            scope.$parent.page.changed = true;
-
             try{
                 //always DOM element
                 var img = tgt
@@ -74,7 +72,7 @@ testApp.directive('imgFrame', function($document, $log, mylocalStorage){
                         })
                         .appendTo( panelEl);
 
-                    scope.$parent.page.images--;
+                    scope.$parent.$parent.page.images--;
                 }
                 frame.imgdata = tgt.src;
 
@@ -86,7 +84,7 @@ testApp.directive('imgFrame', function($document, $log, mylocalStorage){
                     height: Math.ceil(koef*img.height)+"px",
                     top: 0, left: 0}
             });
-//            controller.fireUpdate(frame.rasterData);
+            controller.changed(frame);
 
             if( !event.shiftKey )
                 $(img).remove();
@@ -119,10 +117,9 @@ testApp.directive('imgFrame', function($document, $log, mylocalStorage){
                         }
                     }
                 })
-                controller.enter(frame);
+                controller.changed(frame);
             }
         })
-
     }
 
     return{

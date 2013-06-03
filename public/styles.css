@@ -7,15 +7,20 @@ body {
     border: 1px dashed #aaaaaa;
     left: 140px; top: 0;
     position: absolute;
+    overflow: hidden;
 }
+#carousel{
+    position: relative;
+    -webkit-transition: left 1s ease-in-out;
+    -moz-transition: left 1s ease-in-out;
+}
+.carouselPage{
+    position: absolute;
+}
+
 .frame{
     position: absolute;
 }
-/*.live{*/
-    /*position: absolute;*/
-    /*left:0;*/
-    /*top:0;*/
-/*}*/
 
 .controlsManager{
     position: relative;
@@ -23,7 +28,7 @@ body {
     top:0;
 }
 .imgframe {
-    padding: 5px;
+    /*padding: 5px;*/
     overflow: hidden;
     background-color: #ccc;
 }
@@ -33,7 +38,7 @@ body {
 .framecontrols{
     position: relative;
     top: 0;
-    width: 65px;
+    width: 95px;
     height: 20px;
 }
 .imgcontrols{
@@ -66,6 +71,10 @@ body {
 .download {
     background: top left no-repeat url(assets/place.png);
     right: 48px;
+}
+.comment {
+    background: top left no-repeat url(assets/comment.png);
+    right: 70px;
 }
 .file {
     right: 48px;
@@ -112,11 +121,17 @@ body {
 .counter>img{ opacity: .3;}
 .activated {background-color: #fff}
 
+
+
+#buttons{
+    position: absolute;
+    left: 10px;
+}
 button {
     margin: 3px;
     margin-bottom: 10px;
     background: #999;
-    border:2px solid #444;
+    border:1px solid #444;
     text-align:center;
     color: #eee;
     padding: 3px;
@@ -125,14 +140,6 @@ button {
     box-shadow:
         3px 3px 6px rgba(0, 0, 0, .2),
         0px 0px 3px rgba(0, 0, 0, .1)
-} 
-/*button:hover {*/
-    /*background:#888;*/
-    /*color:#fff;*/
-/*}*/
-#buttons{
-    position: absolute;
-    left: 10px;
 }
 input{
     width: 40px;
@@ -160,13 +167,11 @@ form{
     position: absolute;
     width: 125px;
     height: 1000px;
-    left: 1000px;
+    left: 1020px;
     top:0;
     background-color: #ddfadf;
 }
-/*.imgLoaded{*/
-    /*width: 100%;*/
-/*}*/
+
 .canvas{ width: 125px; position: relative; z-index: 0; left: 1000px }
 
 
