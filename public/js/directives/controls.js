@@ -115,7 +115,7 @@ testApp.directive('frameControls', function(){
 
                 promptDlg = prompt("Enter comments: ", comnts);
                 frame.comments = promptDlg;
-                scope.changed = (comnts==promptDlg) ? false : true;
+                page.changed = (comnts==promptDlg) ? false : true;
             });
             $('.revert', el).on('mouseup', function(){
                 var numOfPreviews = $('#picsLoadedPanel').children().length;

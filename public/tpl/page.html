@@ -1,4 +1,4 @@
-<div my-Carousel ng-style="carousel.style" id='carousel'>
+<div id='carousel' ng-controller="MyCarousel" ng-style="carousel.style">
     <div ng-repeat="page in carousel" class="carouselPage" ng-style="page.style">
         <div ng-repeat="frame in page.frames" class="frame" ng-style="frame.style">
             <div img-Frame ng-style="frame.imgframe" class="imgframe">
@@ -21,16 +21,17 @@
 </div>
 
 <div id="buttons">
-    <a ng-href="{{gotoPageNum}}"><button ng-click="addPage()">New page</button></a>
-    <button id="savePageBtn" ng-click="savePage()" ng-class="{changed: changed}">Save page</button>
-    <a ng-href="{{gotoPageNum}}"><button ng-click="prevPage()">&lt;--</button></a>
-        <form ng-submit="gotoPage(currPageNum)">
-            <input ng-model="currPageNum">
-        </form>
-    <a ng-href="{{gotoPageNum}}"><button ng-click="nextPage()">--&gt;</button></a>
+    <a ng-href="{{gotoPageNum}}" class="btn btn-small" ng-click="addPage()"><i class="icon-plus"></i></a>
+    <button type="button" class="btn btn-small" ng-class="{'btn-warning': changed}" ng-click="savePage()" ><i class="icon-exclamation-sign"></i>&nbsp;Save</button>
+    <a ng-href="{{gotoPageNum}}" class="btn btn-small" ng-click="prevPage()"><i class="icon-chevron-left"></i></a>
+    <input type="text" class="input-mini" ng-click="gotoPage(currPageNum)" ng-model="currPageNum">
 
-    <button id="stat" ng-click="toggleStat()">{{statShow}} stats</button>
+    <a ng-href="{{gotoPageNum}}"class="btn btn-small" ng-click="nextPage()"><i class="icon-chevron-right"></i></a>
+
+    <a ng-href="{{gotoPageNum}}" class="btn btn-small btn-info" ng-click="toggleStat()"><!--<i class="icon-list-alt">-->{{statShow}} stats<!--</i>--></a>
+    <a ng-href="#/passport"  class="btn btn-small"><i class="icon-user"></i></a>
 
     <div># of pages:{{pagesNum}}</div>
     <div>Photos placed: {{photos}}</div>
 </div>
+

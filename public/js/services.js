@@ -18,7 +18,10 @@ angular.module('testApp.sharedServices', [])
                         }
                     }
                     //if the very firt page
-                    if(stats.length==0) stats[0] = page.stat;
+                    if(stats.length==0) {
+                        page = {ix:0, stat:[]}
+                        stats[0] = page.stat;
+                    }
 
                     $rootScope.statsLoaded = true;
                     return i;

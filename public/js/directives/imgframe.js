@@ -2,11 +2,9 @@ testApp.directive('imgFrame', function($document, $log, mylocalStorage){
     function Controller($rootScope, $scope){
         var frame = $scope.frame;
 
-//        function fireUpdate(data){
-//            $rootScope.stat.push[$rootScope.currPageNum - 1][frame.ix] = data;
-//        };
         function revert (){
-            $rootScope.$broadcast('imageReverted', frame.imgdata)
+            $rootScope.$broadcast('imageReverted', frame.imgdata);
+            $rootScope.$broadcast('pageChanged');
         }
         function changed(){
             var img = frame.imgstyle,
@@ -82,9 +80,11 @@ testApp.directive('imgFrame', function($document, $log, mylocalStorage){
                 frame.imgstyle = {
                     width: Math.ceil(koef*img.width)+"px",
                     height: Math.ceil(koef*img.height)+"px",
-                    top: 0, left: 0}
+                    top: 0, left: 0};
+
+                controller.changed(frame);
+
             });
-            controller.changed(frame);
 
             if( !event.shiftKey )
                 $(img).remove();

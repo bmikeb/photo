@@ -10,8 +10,6 @@ function mainCtrl($rootScope, $scope, mylocalStorage){
 
 function pageCtrl($scope, $rootScope, mylocalStorage, $routeParams, $timeout, $log){
 
-    var currPage = Number($routeParams.currPageNum);
-
     function getStat(){
         $rootScope.pagesNum = mylocalStorage.get('*');
         var photos = 0;
@@ -26,10 +24,6 @@ function pageCtrl($scope, $rootScope, mylocalStorage, $routeParams, $timeout, $l
 
         return init(null, data, pageIx);
     };
-
-    $scope.safeApply = function(fn) {
-        if(!$scope.$$phase) $scope.$apply(fn)
-    }
 
     $scope.gotoPage = function ( inc){
         $scope.inc = inc || 0;//if number enterd directly in text field
@@ -124,15 +118,15 @@ function pageCtrl($scope, $rootScope, mylocalStorage, $routeParams, $timeout, $l
         $rootScope.statShow= $rootScope.statShow=='Hide'? 'Show' : 'Hide';
     }
 
-    //at the moment $routeParams already configured 'cos ctrl is loaded after hash resolving and holds new page Number
-    //first is for normal flow (when prevPage exists, second -- for when page refresh)
+    //at the moment $routeParams already configured 'cos ctrl is loaded after hash resolving
+    // and therefore it holds new page Number
+
+    //first is for normal flow (when prevPage exists, second -- when page refresh occurs)
     var prevIX = $rootScope.prevPageNum - 1 || Number($routeParams.currPageNum) - 2
-    var prevP = getCachedData(prevIX);
-    $rootScope.carousel[0] = prevP;
-    $rootScope.carousel[0].style= {left: 0}
+    carousel[0] = getCachedData(prevIX);
 
     var curIX = Number($routeParams.currPageNum) - 1;
-    var newP = getCachedData(curIX);
+    getCachedData(curIX);
     $rootScope.currPageNum = curIX+1;
 
     if(typeof inc=='undefined'){
@@ -140,30 +134,8 @@ function pageCtrl($scope, $rootScope, mylocalStorage, $routeParams, $timeout, $l
         inc = 0
     }
     $scope.changed = false;
-}
 
-
-function thumbsCtrl($scope, $rootScope){
-    $scope.layouts = [];
-    $rootScope.currPageNum = 1;
-    $rootScope.assetsPath = 'assets/layouts/1/';
-
-    angular.forEach(assetLib, function(value, key){
-        $scope.layouts.push({src: $rootScope.assetsPath + value, numUsed: 0});
-    });
-
-    $scope.addAsset = function(){
-        var assetChosen = this.$index;
-        $rootScope.$broadcast('assetAdded', assetChosen);//events attached to rootScope
-        this.layout.numUsed++;
-    };
-
-    $scope.makeFavorite= function(){
-        event.stopPropagation();
-        if( !this.layout.fav)
-            this.layout.fav = {opacity: 1.0};
-        else
-        if(this.layout.fav.opacity == 1.0)
-            this.layout.fav = {opacity: 0.6}
-    };
+    $scope.safeApply = function(fn) {
+        if(!$scope.$$phase) $scope.$apply(fn)
+    }
 }

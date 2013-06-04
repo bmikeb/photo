@@ -1,14 +1,12 @@
 testApp.directive('infoPanel', function($rootScope, mylocalStorage){
     return{
 
-        templateUrl: 'details.html',
+        templateUrl: 'tpl/details.html',
+        transclude: true,
         scope: true,
 
         controller: function($rootScope, $scope, $log){
-            var $stats = $scope.stats || [],
-                pages = $rootScope.pages;
             $scope.preview = '';
-            var createStats = false;
 
             $scope.$on('updateStat', function(event, pageStat){
                 $scope.stats = [];
@@ -58,6 +56,7 @@ testApp.directive('infoPanel', function($rootScope, mylocalStorage){
 
                 })
             }
+
             var sort = $scope.sort;
             $scope.selectedCls = function(column) {
                 if(column=='f_preview') return;
@@ -95,7 +94,7 @@ testApp.directive('infoPanel', function($rootScope, mylocalStorage){
             }
         },
 
-        link: function (scope, el, attr, ctrl){
+        link: function (scope, el, attr){
             $rootScope.$watch('statShow',function(newVal){
                 var c = newVal=='Show' ? 'up' : 'down';
                 el.attr({'class': c, id:'infoPanel'});

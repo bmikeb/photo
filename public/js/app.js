@@ -1,11 +1,10 @@
 
-var testApp = angular.module('testApp', ['testApp.sharedServices'])
+var testApp = angular.module('myApp', ['testApp.sharedServices'])
 .config(['$routeProvider', function($routeProvider) {
     $routeProvider
-        .when('/pages/:currPageNum', {
-            templateUrl: 'page.html',
-            controller: pageCtrl
+        .when('/pages/:currPageNum', { templateUrl: 'tpl/page.html',  controller: pageCtrl
         })
-//        .when('/details', {templateUrl: 'infopanel.html', controller: SortableTableCtrl})
+        .when('/passport', { templateUrl: 'tpl/form.html', controller: UserFormCtrl
+        })
         .otherwise({redirectTo: '/pages/1'});
 }])
