@@ -14,7 +14,7 @@ testApp.controller('thumbsCtrl', function($scope, $rootScope, $http){
         });
 
     $scope.addAsset = function(){
-        $rootScope.$broadcast('assetAdded', data[this.$index]);//events attached to rootScope
+        $rootScope.$broadcast('assetAdded', data[this.$index]);
         this.layout.numUsed++;
     };
 

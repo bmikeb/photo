@@ -120,9 +120,6 @@ function pageCtrl($scope, $rootScope, mylocalStorage, $routeParams){
         $rootScope.statShow= $rootScope.statShow=='Hide'? 'Show' : 'Hide';
     }
 
-    //at the moment $routeParams already configured 'cos ctrl is loaded after hash resolving
-    // and therefore it holds new page Number
-
     //first is for normal flow (when prevPage exists, second -- when page refresh occurs)
     var prevIX = $rootScope.prevPageNum - 1 || Number($routeParams.currPageNum) - 2
     carousel[0] = getCachedData(prevIX);
