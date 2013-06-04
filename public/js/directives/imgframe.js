@@ -42,21 +42,19 @@ testApp.directive('imgFrame', function($document, $log, mylocalStorage){
 
         el.bind('dragstart', function(event){
             event.dataTransfer.effectAllowed = "move";
-            tgt = $('.img.fitted', this)})
+            tgt = $('.img.fitted', this);
+            scope.$apply(function(){
+                controller.changed(frame);
+            });
+        })
 
         el.bind('drop', function (event){
             event.stopPropagation();
             event.preventDefault();
 
-            try{
-                //always DOM element
-                var img = tgt
-//                    id = (parseInt($(img).attr('id').substr(2)) - 1) || tgt.id.substr(2) - 1;
-            }catch(err){
-                var img = event.target;
-//                alert("Dropping image from desktop onto frame is not supported")
-            }
-            frame.rasterData = JSON.parse( $(img).attr('data'));
+            var img = tgt;
+            var dta = $(img).attr('data');
+            frame.rasterData = (angular.isString(dta))? JSON.parse(dta) : dta
 
             scope.$apply(function(){
                 if(frame.imgdata && frame.imgdata!=''){
@@ -75,12 +73,20 @@ testApp.directive('imgFrame', function($document, $log, mylocalStorage){
                 frame.imgdata = tgt.src;
 
                 //fit to maximize
-                koef = Math.max(frame.w/img.width, frame.h/img.height)
+                var koef, w, h;
+                if(!img.width){
+                    koef = img.data.c_scale;
+                    w = 125, h= w/koef;
+                }else{
+                    koef = Math.max(frame.w/img.width, frame.h/img.height);
+                    w= img.width, h = img.height;
+                }
 
                 frame.imgstyle = {
-                    width: Math.ceil(koef*img.width)+"px",
-                    height: Math.ceil(koef*img.height)+"px",
-                    top: 0, left: 0};
+                    width: Math.ceil(koef*w)+"px",
+                    height: Math.ceil(koef*h)+"px",
+                    top: 0, left: 0
+                };
 
                 controller.changed(frame);
 

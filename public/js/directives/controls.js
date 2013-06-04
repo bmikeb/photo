@@ -9,10 +9,10 @@ testApp.directive('imgControls', function($document, $log){
                 ctrls = frame.imgcontrols,
                 page = scope.$parent.$parent;
 
-            var resize = $('.resize', el),
-                move = $('.move', el);
+            var resize = angular.element(el.children()[0])
+                move = angular.element(el.children()[1]);
 
-            resize.on('mousedown', function(event){
+            resize.bind('mousedown', function(event){
                 var initX = event.pageX,
                     initY = event.pageY,
                     deltaX, deltaY,
@@ -43,17 +43,20 @@ testApp.directive('imgControls', function($document, $log){
                             return;
                         }
                         else{
+                            frame.rasterData.c_scale *= img.height/newHeight;
+
                             img.height = newHeight + 'px';
                             img.width = newWidth + 'px';
 
                             ctrls.top = i(ctrls.top) + deltaY + 'px';
                             ctrls.left = i(ctrls.left) + deltaX + 'px';
+
                         }
                     })
                 };
             });
 
-            move.on('mousedown', function(event){
+            move.bind('mousedown', function(event){
                 var initX = event.pageX,
                     initY = event.pageY;
 

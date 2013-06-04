@@ -10,7 +10,8 @@ testApp.directive('infoPanel', function($rootScope, mylocalStorage){
 
             $scope.$on('updateStat', function(event, pageStat){
                 $scope.stats = [];
-                $rootScope.stats.push(pageStat);
+                if($scope.stats.rasterData!='')
+                     $rootScope.stats.push(pageStat);
 
                 processUpdate(pageStat);
 
@@ -40,16 +41,19 @@ testApp.directive('infoPanel', function($rootScope, mylocalStorage){
                             $scope.stats.push( page[i] );
                         }
                     }else{
+                        //reset page info
                         $rootScope.stats[key] = [];
 
                         angular.forEach(pageStat.stat, function(obj){
-                            var scale = obj['c_scale'];
-                            var ppi = obj['d_origSize'].split('x');
-                            var hor = ppi[0]/scale, vert = ppi[1]/scale;
-                            obj['d_current'] = obj['d_origSize'] + " ("+ parseInt(hor) +"x"+parseInt(vert)+")";
+                            if(obj['c_scale']){
+                                var scale = obj['c_scale'];
+                                var ppi = obj['d_origSize'].split('x');
+                                var hor = ppi[0]/scale, vert = ppi[1]/scale;
+                                obj['d_current'] = obj['d_origSize'] + " ("+ parseInt(hor) +"x"+parseInt(vert)+")";
 
-                            $scope.stats.push(obj);
-                            $rootScope.stats[key].push(obj);
+                                $scope.stats.push(obj);
+                                $rootScope.stats[key].push(obj);
+                            }
                         });
                         $rootScope.stats.pop();
                     }

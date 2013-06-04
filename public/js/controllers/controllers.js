@@ -54,8 +54,8 @@ function pageCtrl($scope, $rootScope, mylocalStorage, $routeParams){
         $rootScope.pagesNum++;
     };
 
-    $scope.$on('assetAdded', function (event, assetChosen){
-        var newPage = $rootScope.carousel[0] = init(event, {frames: data[assetChosen]}, $rootScope.currPageNum-1)
+    $scope.$on('assetAdded', function (event, assetData){
+        var newPage = $rootScope.carousel[1] = init(event, {frames: assetData}, $rootScope.currPageNum-1)
         newPage.style= {left: 1000+'px'}
     });
 
@@ -76,10 +76,12 @@ function pageCtrl($scope, $rootScope, mylocalStorage, $routeParams){
             var rData = JSON.stringify(frame.rasterData);
             if(rData && rData.length > 3){
                 page.stat[key] = frame.rasterData;
-                page.stat[key]['a_pageNum'] = page.ix+1;
+            }else{
+                page.stat[key] = {}
             }
-            statsToUpdate = {ix: page.ix, stat: page.stat }
+            page.stat[key]['a_pageNum'] = page.ix+1;
         });
+        statsToUpdate = {ix: page.ix, stat: page.stat }
 
         mylocalStorage.save(page);
         $rootScope.$broadcast('updateStat', statsToUpdate);

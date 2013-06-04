@@ -19,7 +19,7 @@
             <label class="control-label" for="pwd">Password</label>
             <div class="controls">
                 <div class="input-prepend">
-                    <input type="password" name="pwd" required placeholder="Password"/>
+                    <input type="password" name="pwd" ng-model="password" required placeholder="Password"/>
                 </div>
             </div>
         </div>
@@ -30,6 +30,7 @@
                 <a ng-href="#/pages"><button class="btn">Revert to Album</button></a>
             </div>
         </div>
-        <p ng-show="cause">{{cause}}</p>
+
+        <div ng-show="cause">Error: {{cause}}</div>
     </form>
 </div>

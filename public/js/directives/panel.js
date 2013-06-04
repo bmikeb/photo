@@ -70,17 +70,20 @@ testApp.directive('inPanel', function(mylocalStorage){
                         reader.readAsDataURL(file);
                     }
                 }else{
-                    el.append('<img style="width:100%" src="' +e.dataTransfer.getData("text/uri-list")+'">');
+                    el.append('<img style="width:100%" src="' +e.dataTransfer.getData("text/uri-list")+
+                        '" data=\'' + JSON.stringify(fromObj.rasterData)+'\'>');
+
                     imgFrameEl.children().remove();
 
                     panel.push(fromObj.rasterData);
 
                     var fromScope = imgFrameEl.scope();
-                    tgt = {src: fromScope.frame.imgdata, id:"i-"+panel.length}
+                    tgt = {src: fromScope.frame.imgdata, id:"i-"+panel.length, data:fromObj.rasterData}
 
                     fromScope.safeApply(function(){
                         fromScope.frame.imgdata='';
                         fromScope.frame.imgstyle="";
+                        fromScope.frame.rasterData = '';
                     })
                     imgFrameEl.append('<img class="img fitted" picture ng-src="{{frame.imgdata}}" ng-style="frame.imgstyle">')
                 }
