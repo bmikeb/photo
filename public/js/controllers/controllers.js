@@ -1,4 +1,4 @@
-function mainCtrl($rootScope, $scope, mylocalStorage){
+function mainCtrl($rootScope){
     pages = $rootScope.pages = [];
     carousel = $rootScope.carousel=[];
 
@@ -8,7 +8,7 @@ function mainCtrl($rootScope, $scope, mylocalStorage){
     $rootScope.pagesNum = 0;
 }
 
-function pageCtrl($scope, $rootScope, mylocalStorage, $routeParams, $timeout, $log){
+function pageCtrl($scope, $rootScope, mylocalStorage, $routeParams){
 
     function getStat(){
         $rootScope.pagesNum = mylocalStorage.get('*');

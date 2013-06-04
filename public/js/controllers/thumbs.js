@@ -1,11 +1,17 @@
-testApp.controller('thumbsCtrl', function($scope, $rootScope){
+testApp.controller('thumbsCtrl', function($scope, $rootScope, $http){
     $scope.layouts = [];
     $rootScope.currPageNum = 1;
     $rootScope.assetsPath = 'assets/layouts/1/';
 
-    angular.forEach(assetLib, function(value, key){
-        $scope.layouts.push({src: $rootScope.assetsPath + value, numUsed: 0});
-    });
+    var promise = $http.get('/js/assets/test.json')
+        .success(function(data){
+            assetLib = data.assetLib;
+            data = data.data;
+
+            angular.forEach(assetLib, function(value, key){
+                $scope.layouts.push({src: $rootScope.assetsPath + value, numUsed: 0});
+            });
+        });
 
     $scope.addAsset = function(){
         var assetChosen = this.$index;
